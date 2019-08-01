@@ -16,10 +16,10 @@ use Qiniu\Storage\UploadManager;
 
 class QiNiuController extends Controller
 {
-    static $key = '5v8fsv4p3onecZBNC5jxvO65-UWFrBL3n97U8wb2';
-    static $secret = '15ceLam5CCz1nEEmEttj6oU9I4QiR9thIiaOCJCB';
+    static $key = 'RHzcneMNktBUayEy720O-WTGZDHVbpm7TfCEcoMZ';
+    static $secret = 'bPc_kpTdCO6fnPLBBMPEK8pT5kRL1kCDlFVcglvQ';
     static $url = 'https://im.cdn.caomei520.com/';
-    static $bucket = 'im-oss';
+    static $bucket = 'im';
     public $auth;
     public $token;
 

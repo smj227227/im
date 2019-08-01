@@ -11,29 +11,16 @@
 |
 */
 
-$router->group(['middleware'=>'weixin'],function ($app) {
 
-    $app->get('login', function () {
-        return view('Mobile.User.login');
-    });
 
-    $app->get('weixin', function () {
-        return view('Mobile.weixin');
-    });
+Route::post('login', 'User\UserController@login');
 
-    $app->post('login', 'User\UserController@login');
+Route::post('reg', 'User\UserController@reg');
 
-    $app->get('reg', function () {
-        return view('Mobile.User.reg');
-    });
+Route::get('user/code/{phone}', 'User\UserController@sendRegSms');
 
-    $app->post('reg', 'User\UserController@reg');
 
-    $app->get('user/code/{phone}', 'User\UserController@sendRegSms');
-});
-
-$router->group(['middleware'=>'login'],function ($app){
-
+Route::group(['middleware'=>'login'],function ($app){
 
     $app->get('/', 'Index\IndexController@index');
 

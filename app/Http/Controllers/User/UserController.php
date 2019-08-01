@@ -40,7 +40,6 @@ class UserController extends Controller
 
     public function reg(Request $request){
         $data = $request->all();
-
         if(strlen($data['phone']) == 11 &&  strlen($data['password']) >=6 && strlen($data['code']) == 4){
             $code = Redis::get('code:'.$data['phone']);
             if($data['code'] == $code){
@@ -51,11 +50,11 @@ class UserController extends Controller
                 $user->avatar = 'https://im.cdn.caomei520.com/WechatIMG591.jpeg!100x100png';
                 $user->save();
                 if($user){
-                    return redirect('/login');
+                    return ['code'=>200];
                 }
             }
         }
-        return redirect('/reg');
+        return ['code'=>400];
     }
 
     public function sendRegSms($phone){
