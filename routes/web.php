@@ -19,10 +19,21 @@ Route::post('reg', 'User\UserController@reg');
 
 Route::get('user/code/{phone}', 'User\UserController@sendRegSms');
 
-
 Route::group(['middleware'=>'login'],function ($app){
 
-    $app->get('/', 'Index\IndexController@index');
+    $app->group(['prefix'=>'user','namespace'=>'User'],function ($app){
+
+        //$app->get('');
+    });
+
+
+    $app->group(['prefix'=>'token','namespace'=>'Token'],function ($app){
+
+        $app->post('reload','TokenController@reload');
+    });
+
+    //$app->get('/user/token/reload');
+
 
     $app->get('user/my','User\UserController@my');
 

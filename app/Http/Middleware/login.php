@@ -16,17 +16,15 @@ class login
 {
     public function handle($request, Closure $next)
     {
-        $token = $request->cookie('token');
-        $user = $request->cookie('user');
-        if(!empty($token) && !empty($user)){
-            $data['uid'] = json_decode($user,true)['id'];
-            $data['token'] = $token;
+        $data['token'] = $request->header('token');
+        $data['uid'] = $request->header('uid');
+        if(!empty($data['token']) && !empty($data['uid'])){
             $status = UserController::checkToken($data);
             if($status){
                 return $next($request);
             }
         }
-        return redirect('/login');
+        return ['code'=>32001];
 
     }
 }

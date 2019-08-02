@@ -13,28 +13,25 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Friend\FriendController;
 use App\Http\Controllers\Group\GroupController;
 use App\Http\Controllers\Help\HelpController;
-use App\Http\Model\AddFriend;
+use App\Http\Controllers\Token\TokenController;
 use App\Http\Model\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 
 class UserController extends Controller
 {
     public function login(Request $request){
+
         $data = $request->all();
         if(strlen($data['phone']) == 11 && strlen($data['password']) >=6){
             $data['password'] = md5($data['password']);
             $user = User::select('id','phone','avatar','username')->where($data)->first();
             if($user){
-                $token = self::token($user->id,$user->phone);
-                setcookie('token',$token,time()+3600000);
-                setcookie('user',json_encode($user->toArray(),JSON_UNESCAPED_UNICODE),time()+3600000);
-                return redirect('/');
+                $token = TokenController::Token($user->id,$user->phone);
+                return ['code'=>200,'data'=>$token];
             }
         }
-        return redirect('login');
+        return ['code'=>parent::$RequestParameterError];
     }
 
 
@@ -47,14 +44,18 @@ class UserController extends Controller
                 $user->username = $data['phone'];
                 $user->phone = $data['phone'];
                 $user->password = md5($data['password']);
-                $user->avatar = 'https://im.cdn.caomei520.com/WechatIMG591.jpeg!100x100png';
+                $user->avatar = 'https://im.cdn.caomei520.com/null.jpg!100x100png';
                 $user->save();
                 if($user){
                     return ['code'=>200];
                 }
+            }else{
+                return ['code'=>parent::$SmsCodeError];
             }
+        }else{
+            return ['code'=>parent::$RequestParameterError];
         }
-        return ['code'=>400];
+
     }
 
     public function sendRegSms($phone){
@@ -66,9 +67,11 @@ class UserController extends Controller
                if($smsStatus){
                    return ['code'=>200];
                }
+           }else{
+               ['code'=>parent::$RequestTooFast];
            }
        }
-        return ['code'=>400];
+        return ['code'=>parent::$UserExist];
     }
 
 
@@ -198,11 +201,7 @@ class UserController extends Controller
     }
 
 
-    public static  function token($id,$phone){
-        $token  = md5($phone.time());
-        Redis::setex('token:'.$token,3600000,$id);
-        return $token;
-    }
+
 
     public static function checkToken($data){
         if(!empty($data['token'])){
