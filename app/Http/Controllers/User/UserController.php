@@ -27,7 +27,7 @@ class UserController extends Controller
             $data['password'] = md5($data['password']);
             $user = User::select('id','phone','avatar','username')->where($data)->first();
             if($user){
-                $token = TokenController::Token($user->id,$user->phone);
+                $token = TokenController::Token($user->id);
                 return ['code'=>200,'data'=>$token];
             }
         }
@@ -118,22 +118,7 @@ class UserController extends Controller
     }
 
 
-    public function searchFriend($phone){
-        $data = self::phoneToUser($phone);
-        if($data){
-            return ['code'=>200,'data'=>$data];
-        }
-        return ['code'=>400];;
-    }
 
-    public function searchGroup($id){
-        $data = GroupController::searchGroup($id);
-        if($data){
-            return ['code'=>200,'data'=>$data];
-        }else{
-            return ['code'=>400];
-        }
-    }
 
 
     public static function code($phone){
@@ -171,23 +156,11 @@ class UserController extends Controller
 
     }
 
-    public static function phoneToUser($phone){
-        $uid = Redis::hget('phone_to_user',$phone);
-        if($uid){
-            return self::getUser($uid);
-        }else{
-            $user = User::getPhone($phone);
-            if($user){
-                Redis::hset('phone_to_user',$phone,$user['id']);
-                return $user;
-            }
-        }
-        return false;
-    }
 
 
-    public static function getUserId(){
-        $uid = Redis::get('token:'.$_COOKIE['token']);
+
+    public static function getUserId(Request $request){
+        $uid = Redis::get('token:'.$request->header('x-tk'));
         return $uid;
     }
 

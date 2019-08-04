@@ -16,8 +16,8 @@ class login
 {
     public function handle($request, Closure $next)
     {
-        $data['token'] = $request->header('token');
-        $data['uid'] = $request->header('uid');
+        $data['token'] = $request->header('x-tk');
+        $data['uid'] = $request->header('x-uid');
         if(!empty($data['token']) && !empty($data['uid'])){
             $status = UserController::checkToken($data);
             if($status){

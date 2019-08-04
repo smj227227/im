@@ -29,41 +29,38 @@ class WebSocketController extends  Controller
 
         if(!is_array($data)){
             $data = json_decode($data,true);
-            if($data['type']!=4 ){
-                Log::info($data);
+            $status = UserController::checkToken($data);
+            if($status){
+                switch ($data['type']){
+                    case 0:
+                            //绑定uid,更改上线状态,通知该用户所有的好友
+                            Gateway::bindUid($client_id,$data['uid']);
+                            GroupController::bindUserGroup($data['uid']);
+                            //dispatch(new OfflineMsg(json_encode(['uid'=>$data['uid']])))->onQueue('offlineMsg');
+                        break;
+                    case 1:
+                        ChatController::assArray($data);
+                        break;
+                    case 2:
+                        ChatController::peerToGroup($data);
+                        break;
+                    case 4:
+                        //心跳 忽略
+                        break;
+                    case 5: //群组消息
 
+                        break;
+                    case 7:
+                        //客户端申请通过要求准备推送群组消息
+
+                    default :
+
+                }
             }
 
-        }
-        switch ($data['type']){
-            case 0:
-                //绑定uid,更改上线状态,通知该用户所有的好友
-                $status = UserController::checkToken($data);
-                if($status){
-                    Gateway::bindUid($client_id,$data['uid']);
-                    GroupController::bindUserGroup($data['uid']);
-                    Log::info($data);
-                    dispatch(new OfflineMsg(json_encode(['uid'=>$data['uid']])))->onQueue('offlineMsg');
-                }
-                break;
-            case 1:
-                ChatController::assArray($data);
-                break;
-            case 2:
-                ChatController::peerToGroup($data);
-                break;
-            case 4:
-                //心跳 忽略
-                break;
-            case 5: //群组消息
-
-                break;
-            case 7:
-                //客户端申请通过要求准备推送群组消息
-
-            default :
 
         }
+
     }
 
     public static function isUidOnline($uid){

@@ -26,7 +26,11 @@ class Controller extends BaseController
 
     public static  $SmsCodeError   = 31001; //验证码错误
 
-    public static  $tokenErr       = 32001; //token错误
+    public static  $TokenErr       = 32001; //token错误
+
+    public static  $GroupIsNull    = 33001; //群组不存在
+
+    public static  $AddFriendErr   = 40001; //添加用户失败
 
 
 

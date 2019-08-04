@@ -23,16 +23,31 @@ Route::group(['middleware'=>'login'],function ($app){
 
     $app->group(['prefix'=>'user','namespace'=>'User'],function ($app){
 
-        //$app->get('');
+
     });
 
 
     $app->group(['prefix'=>'token','namespace'=>'Token'],function ($app){
 
-        $app->post('reload','TokenController@reload');
+        $app->get('reload','TokenController@reload');
     });
 
-    //$app->get('/user/token/reload');
+
+    $app->group(['prefix'=>'friend','namespace'=>'Friend'],function($app){
+
+        $app->get('get','FriendController@getFriend');
+
+        $app->get('add/{friend_id}','User\UserController@addFriend');
+    });
+
+
+    $app->group(['prefix'=>'search','namespace'=>'Search'],function($app){
+
+        $app->get('friend/{phone}','SearchController@searchFriend');
+
+    });
+
+
 
 
     $app->get('user/my','User\UserController@my');
@@ -43,7 +58,7 @@ Route::group(['middleware'=>'login'],function ($app){
 
     $app->get('user/search/friend/{phone}','User\UserController@searchFriend');
 
-    $app->get('user/add/friend/{friend_id}','User\UserController@addFriend');
+
 
     $app->get('user/add/group/{gid}','User\UserController@addGroup');
 

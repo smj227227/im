@@ -15,18 +15,19 @@ use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\WebSocket\WebSocketController;
 use App\Http\Model\AddFriend;
 use App\Http\Model\Friend;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 
 class FriendController extends Controller
 {
-    public static function getFriend(){
-        $uid = UserController::getUserId();
+    public static function getFriend(Request $request){
+        $uid = $request->header('uid');
         $friend_id = Friend::getUserFriendId($uid);
         if(!empty($friend_id)){
             $friend_msg = Friend::getUserFriendMsg($friend_id);
         }
-        return $friend_msg??[];
+        return ['code'=>200,'data'=>['friend'=>$friend_msg??[]]];
     }
 
     public function getRequestManage(){
@@ -34,6 +35,18 @@ class FriendController extends Controller
         $data = Friend::getRequestManage($uid);
         return view('Mobile.Friend.search',['data'=>$data]);
 
+    }
+
+    public function RequestAddFriend(Request $request,$friend_id){
+        $uid = $request->header('x-uid');
+        $status = Redis::sismember('friend:'.$uid,$friend_id);
+        if($status == 0 && $uid != $friend_id){
+            Redis::sadd('add_friend:'.$friend_id,$uid);
+            self::addFriend($uid,$friend_id);
+            return ['code'=>200];
+        }else{
+            return ['code'=>parent::$AddFriendErr];
+        }
     }
 
 

@@ -19,19 +19,16 @@ class TokenController extends Controller
     public static $time = 3600000;
 
     public function reload(Request $request){
-        $data = $request->all();
-        if(!empty($data['uid']) && !empty($data['phone'])){
-            return ['code'=>200,'data'=>self::Token($data['uid'],$data['phone'])];
-        }else{
-            return ['code'=>parent::$RequestParameterError];
+        $uid = $request->header('x-uid');
+        return ['code'=>200,'data'=>self::Token($uid)];
         }
-    }
 
 
-    public static function Token($uid,$phone){
-        $token  = md5($phone.time());
+
+    public static function Token($uid){
+        $token  = md5($uid.time());
         $expiration_time = time()+self::$time;
         Redis::setex('token:'.$token,self::$time,$uid);
-        return ['token'=>$token,'expiration_time'=>$expiration_time];
+        return ['token'=>$token,'expiration_time'=>$expiration_time,'uid'=>$uid];
     }
 }
