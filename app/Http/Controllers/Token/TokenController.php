@@ -21,7 +21,7 @@ class TokenController extends Controller
     public function reload(Request $request){
         $uid = $request->header('x-uid');
         return ['code'=>200,'data'=>self::Token($uid)];
-        }
+       }
 
 
 
