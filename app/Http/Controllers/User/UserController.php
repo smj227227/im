@@ -41,7 +41,7 @@ class UserController extends Controller
             $code = Redis::get('code:'.$data['phone']);
             if($data['code'] == $code){
                 $user = new User();
-                $user->username = $data['phone'];
+                $user->username = $data['username'];
                 $user->phone = $data['phone'];
                 $user->password = md5($data['password']);
                 $user->avatar = 'https://im.cdn.caomei520.com/null.jpg!100x100png';
@@ -57,6 +57,20 @@ class UserController extends Controller
         }
 
     }
+
+
+    public function avatarReload(Request $request){
+        $uid = $request->header('x-uid');
+        $avatar = $request->input('file','');
+        User::where('id',$uid)->update(['avatar'=>$avatar]);
+        Redis::hdel('user',$uid);
+        return ['code'=>200];
+    }
+
+
+
+
+
 
     public function sendRegSms($phone){
        $user = self::phoneToUser($phone);
@@ -135,17 +149,7 @@ class UserController extends Controller
 
 
 
-    public function addFriend($friend_id){
-        $uid = self::getUserId();
-        $status = Redis::sismember('friend:'.$uid,$friend_id);
-        if($status == 0 && $uid != $friend_id){
-            Redis::sadd('add_friend:'.$friend_id,$uid);
-            FriendController::addFriend($uid,$friend_id);
-            return ['code'=>200];
-        }else{
-            return ['code'=>400];
-        }
-    }
+
 
     public function addGroup($gid){
         $status = GroupController::addUserGroup($gid);
@@ -165,10 +169,7 @@ class UserController extends Controller
     }
 
 
-    public static function getUser($uid = ''){
-        if ($uid == ''){
-            $uid = self::getUserId();
-        }
+    public static function getUser($uid){
         $data = User::getUser($uid);
         return $data;
     }

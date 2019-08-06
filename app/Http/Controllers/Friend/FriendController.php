@@ -30,11 +30,13 @@ class FriendController extends Controller
         return ['code'=>200,'data'=>['friend'=>$friend_msg??[]]];
     }
 
+
+
+
     public function getRequestManage(){
         $uid = UserController::getUserId();
         $data = Friend::getRequestManage($uid);
         return view('Mobile.Friend.search',['data'=>$data]);
-
     }
 
     public function RequestAddFriend(Request $request,$friend_id){
@@ -56,7 +58,7 @@ class FriendController extends Controller
            $online =  WebSocketController::isUidOnline($uid);
            if($online){
                 $message['msgType'] = 0;
-                $message['showType'] = 1;
+                $message['data']['user']=1;
                 WebSocketController::sendUid($friend_id,$message);
            }
            return true;

@@ -21,12 +21,13 @@ use Illuminate\Support\Facades\Log;
 class WebSocketController extends  Controller
 {
     public static function onConnect($client_id){
+        Gateway::sendToClient($client_id,json_encode(['a'=>123]));
 
     }
 
     public static function onMessage($client_id, $data)
     {
-
+    Log::info($data);
         if(!is_array($data)){
             $data = json_decode($data,true);
             $status = UserController::checkToken($data);
@@ -60,6 +61,7 @@ class WebSocketController extends  Controller
 
 
         }
+        echo "new connection from ip123 " . $client_id;
 
     }
 

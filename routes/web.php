@@ -17,12 +17,15 @@ Route::post('login', 'User\UserController@login');
 
 Route::post('reg', 'User\UserController@reg');
 
+Route::get('check/user/{phone}','Search\SearchController@checkUser');
+
 Route::get('user/code/{phone}', 'User\UserController@sendRegSms');
 
 Route::group(['middleware'=>'login'],function ($app){
 
     $app->group(['prefix'=>'user','namespace'=>'User'],function ($app){
 
+        $app->post('avatar/reload','UserController@avatarReload');
 
     });
 
@@ -37,7 +40,7 @@ Route::group(['middleware'=>'login'],function ($app){
 
         $app->get('get','FriendController@getFriend');
 
-        $app->get('add/{friend_id}','User\UserController@addFriend');
+        $app->get('request/add/{friend_id}','FriendController@RequestAddFriend');
     });
 
 
@@ -45,6 +48,11 @@ Route::group(['middleware'=>'login'],function ($app){
 
         $app->get('friend/{phone}','SearchController@searchFriend');
 
+    });
+
+    $app->group(['prefix'=>'upload','namespace'=>'Help\QiNiu'],function ($app){
+
+        $app->get('token','QiNiuController@QiNiuToken');
     });
 
 

@@ -59,9 +59,9 @@ class SocketServer  extends Command
         $Gateway->count = 1;
         $Gateway->lanIp = '127.0.0.1';
         $Gateway->startPort = 10000;
-        $Gateway->pingInterval = 100;  //10s一次心跳
+        $Gateway->pingInterval = 1000;  //10s一次心跳
         $Gateway->registerAddress = '127.0.0.1:1238';
-        $Gateway->pingNotResponseLimit = 300;
+        $Gateway->pingNotResponseLimit = 3000;
         $Gateway->pingData = '';
         $worker = new BusinessWorker();
         $worker->eventHandler = 'App\Http\Controllers\WebSocket\WebSocketController';
