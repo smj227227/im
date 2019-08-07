@@ -32,6 +32,10 @@ class Controller extends BaseController
 
     public static  $AddFriendErr   = 40001; //添加用户失败
 
+    public static  $socketAddFriendRequest = 50001;  //添加好友请求
+
+
+
 
 
 

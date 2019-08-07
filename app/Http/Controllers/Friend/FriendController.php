@@ -39,6 +39,13 @@ class FriendController extends Controller
         return view('Mobile.Friend.search',['data'=>$data]);
     }
 
+
+    /**
+     * @param Request $request
+     * @param $friend_id
+     * @return array
+     * @author mjShu
+     */
     public function RequestAddFriend(Request $request,$friend_id){
         $uid = $request->header('x-uid');
         $status = Redis::sismember('friend:'.$uid,$friend_id);
@@ -52,13 +59,13 @@ class FriendController extends Controller
     }
 
 
-    public static function addFriend($uid,$friend_id){
+    public static function SendAddFriend($uid,$friend_id){
         $status =Friend::addFriend($uid,$friend_id);
         if($status){
            $online =  WebSocketController::isUidOnline($uid);
            if($online){
-                $message['msgType'] = 0;
-                $message['data']['user']=1;
+                $message['msgType'] = parent::$socketAddFriendRequest;
+                $message['data']['user']=UserController::getUser($uid);
                 WebSocketController::sendUid($friend_id,$message);
            }
            return true;

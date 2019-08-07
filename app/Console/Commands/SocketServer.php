@@ -10,6 +10,7 @@ use GatewayWorker\BusinessWorker;
 use GatewayWorker\Gateway;
 use GatewayWorker\Register;
 use Illuminate\Console\Command;
+use Workerman\Worker;
 
 class SocketServer  extends Command
 {
@@ -57,12 +58,16 @@ class SocketServer  extends Command
         new Register('text://0.0.0.0:1238');
         $Gateway->name = 'Gateway';
         $Gateway->count = 1;
-        $Gateway->lanIp = '127.0.0.1';
+        $Gateway->lanIp = '10.26.198.34';
         $Gateway->startPort = 10000;
         $Gateway->pingInterval = 1000;  //10s一次心跳
-        $Gateway->registerAddress = '127.0.0.1:1238';
+        $Gateway->registerAddress = '10.26.198.34:1238';
         $Gateway->pingNotResponseLimit = 3000;
         $Gateway->pingData = '';
+        Worker::$logFile='storage/logs/worker/workerMan.log';
+        Worker::$pidFile='storage/logs/worker/workerMan.pid';
+        Worker::$stdoutFile='storage/logs/worker/stdout.log';
+        Worker::$daemonize = true;
         $worker = new BusinessWorker();
         $worker->eventHandler = 'App\Http\Controllers\WebSocket\WebSocketController';
         $worker->name = 'BusinessWorker';

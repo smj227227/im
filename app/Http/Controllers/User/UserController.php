@@ -44,6 +44,8 @@ class UserController extends Controller
                 $user->username = $data['username'];
                 $user->phone = $data['phone'];
                 $user->password = md5($data['password']);
+                $user->device_id = $data['device_id'];
+                $user->device_type = $data['device_type'];
                 $user->avatar = 'https://im.cdn.caomei520.com/null.jpg!100x100png';
                 $user->save();
                 if($user){
