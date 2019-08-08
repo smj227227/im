@@ -27,23 +27,27 @@ class WebSocketController extends  Controller
 
     public static function onMessage($client_id, $data)
     {
-        if(!is_array($data)){
-            $data = json_decode($data,true);
-            $status = UserController::checkToken($data);
+            Log::info($data);
+            $arr = json_decode($data,true);
+            $status = UserController::checkToken($arr);
             if($status){
-                switch ($data['type']){
+                Log::info($arr);
+                Log::info($arr['type']);
+                Log::info(gettype($arr['type']));
+                switch ($arr['type']){
                     case 0:
+                        Log::info('绑定id');
                             //绑定uid,更改上线状态,通知该用户所有的好友
-                            Gateway::bindUid($client_id,$data['uid']);
-                            GroupController::bindUserGroup($data['uid']);
-                            WebSocketController::sendUid($data['uid'],['a'=>1]);
+                            Gateway::bindUid($client_id,$arr['uid']);
+                            GroupController::bindUserGroup($arr['uid']);
+                            Log::info(Gateway::isUidOnline($arr['uid']));
                             //dispatch(new OfflineMsg(json_encode(['uid'=>$data['uid']])))->onQueue('offlineMsg');
                         break;
                     case 1:
-                        ChatController::assArray($data);
+                        ChatController::assArray($arr);
                         break;
                     case 2:
-                        ChatController::peerToGroup($data);
+                        ChatController::peerToGroup($arr);
                         break;
                     case 4:
                         //心跳 忽略
@@ -58,12 +62,14 @@ class WebSocketController extends  Controller
 
                 }
             }
-        }
+
 
 
     }
 
     public static function isUidOnline($uid){
+        Log::info(123);
+        return Gateway::isUidOnline($uid);
         if(Gateway::isUidOnline($uid)){
             return true;
         }

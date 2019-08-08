@@ -58,12 +58,16 @@ class FriendController extends Controller
         }
     }
 
-
+    /**
+     * @param $uid
+     * @param $friend_id
+     * @return bool
+     */
     public static function SendAddFriend($uid,$friend_id){
-        $status =Friend::addFriend($uid,$friend_id);
-        Log::info($status);
-        if($status){
-           $online =  WebSocketController::isUidOnline($uid);
+        //$status =Friend::addFriend($uid,$friend_id);
+        if(1==1){
+           $online =  WebSocketController::isUidOnline($friend_id);
+           Log::info('online');
            Log::info($online);
            if($online){
                 $message['msgType'] = parent::$socketAddFriendRequest;
