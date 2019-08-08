@@ -51,7 +51,7 @@ class FriendController extends Controller
         $status = Redis::sismember('friend:'.$uid,$friend_id);
         if($status == 0 && $uid != $friend_id){
             Redis::sadd('add_friend:'.$friend_id,$uid);
-            self::addFriend($uid,$friend_id);
+            self::SendAddFriend($uid,$friend_id);
             return ['code'=>200];
         }else{
             return ['code'=>parent::$AddFriendErr];
@@ -61,8 +61,10 @@ class FriendController extends Controller
 
     public static function SendAddFriend($uid,$friend_id){
         $status =Friend::addFriend($uid,$friend_id);
+        Log::info($status);
         if($status){
            $online =  WebSocketController::isUidOnline($uid);
+           Log::info($online);
            if($online){
                 $message['msgType'] = parent::$socketAddFriendRequest;
                 $message['data']['user']=UserController::getUser($uid);
@@ -101,6 +103,5 @@ class FriendController extends Controller
         Redis::srem('add_friend:'.$uid,$friend_id);
         AddFriend::where(['uid'=>$uid,'friend_id'=>$friend_id])->update(['status'=>2]);
         return ['code'=>200];
-
     }
 }

@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Log;
 class WebSocketController extends  Controller
 {
     public static function onConnect($client_id){
-        Gateway::sendToClient($client_id,json_encode(['a'=>123]));
+
 
     }
 
@@ -36,6 +36,7 @@ class WebSocketController extends  Controller
                             //绑定uid,更改上线状态,通知该用户所有的好友
                             Gateway::bindUid($client_id,$data['uid']);
                             GroupController::bindUserGroup($data['uid']);
+                            WebSocketController::sendUid($data['uid'],['a'=>1]);
                             //dispatch(new OfflineMsg(json_encode(['uid'=>$data['uid']])))->onQueue('offlineMsg');
                         break;
                     case 1:
@@ -70,6 +71,8 @@ class WebSocketController extends  Controller
     }
 
     public static function sendUid($uid,$data){
+        Log::info($uid);
+        Log::info($data);
         Gateway::sendToUid($uid,json_encode($data,320));
     }
 
